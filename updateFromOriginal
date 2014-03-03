@@ -1,0 +1,6 @@
+git remote add upstream https://github.com/mrdoob/three.js.git
+git fetch upstream
+#git fetch dev
+git checkout master && git merge upstream/master && git push && \
+git checkout dev && git merge upstream/dev && git push && \
+git checkout cs2 && git merge upstream/dev && git push
