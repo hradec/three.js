@@ -373,7 +373,6 @@ Editor.prototype = {
 			'TorusKnotGeometry': THREE.TorusKnotGeometry,
 			'TubeGeometry': THREE.TubeGeometry,
 			'Geometry': THREE.Geometry,
-			'Geometry2': THREE.Geometry2,
 			'BufferGeometry': THREE.BufferGeometry
 
 		};
