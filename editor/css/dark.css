@@ -1,9 +1,10 @@
-﻿* {
+* {
 	vertical-align: middle;
+    border-color: #111;
 }
 
 	/* Webkit micro scrollbars */
-
+/*
 	::-webkit-scrollbar {
 		width:9px;
 	}
@@ -27,7 +28,7 @@
 	::-webkit-scrollbar-thumb:window-inactive {
 		background:rgba(140,140,140,0.5);
 	}
-
+*/
 body {
 	font-family: Arial, sans-serif;
 	font-size: 14px;
@@ -37,11 +38,22 @@ body {
 
 hr {
 	border: 0px;
-	border-top: 1px solid #ccc;
+	border-top: 2px solid #111;
+    color: #111;    
+    background-color: #111;
 }
 
 button {
-	position: relative;
+    position: relative;
+    background: -webkit-linear-gradient(top,rgba(75,75,75,0) 0%, rgba(50,50,50,1) 100%);    
+    border-color: #333;
+    color:#888;
+}
+button:active {
+    background: -webkit-linear-gradient(top, rgba(50,50,50,1) 100%,rgba(75,75,75,0) 0%);    
+}
+button[disabled=disabled], button:disabled {
+    color:#555;
 }
 
 .Panel {
@@ -73,6 +85,9 @@ button {
 		background-color: #153C5E;
 	}
 
+span {
+    color: #888;
+}
 input.Number {
 	color: #2A75B7;
 	font-size: 12px;							/** TODO: Use of !imporant is not ideal **/
@@ -92,11 +107,18 @@ input.Number {
 
 #menubar {
 	position: absolute;
-	width: 100%;
+    left:0;
+    top:0;
+    width: 100%;
 	height: 32px;
 	background-color: #111;
 	padding: 0px;
 	margin: 0px;
+    background-image: url('../images/cute_ball_shutdown.png');
+    background-size:contain;
+    background-repeat: no-repeat;
+    background-position:right top;
+
 }
 
 	#menubar .menu {
@@ -110,6 +132,7 @@ input.Number {
 	}
 
 		#menubar .menu .options {
+            border-radius: 6px;
 			display: none;
 			padding: 5px 0px;
 			background-color: #111;
@@ -146,6 +169,8 @@ input.Number {
 	width: 300px;
 	background-color: #111;
 	overflow: auto;
+    border-left: 1px solid #333; 
+
 }
 
 	#sidebar input,
@@ -183,8 +208,8 @@ input.Number {
 	right: 300px;
 	bottom: 0px;
 	height: 32px;
-	background-color: #111;
-	color: #333;
+	background-color: #444;
+	color: #ddd;
 }
 
 	#toolbar .Panel {
@@ -196,4 +221,57 @@ input.Number {
 		margin-right: 6px;
 	}
 
+
+
+.tabs {
+    position: fixed;
+    right: 0px;
+    top: 31px;
+    bottom: 0px;
+    width: 300px;
+    color: #222;
+    padding: 10px;
+    border: 0px;
+    background: transparent; 
+    clear: both;
+}
+.tab {
+  float: left;
+}
+.tab label {
+  background: #444; 
+  padding: 10px; 
+  border-right: 1px solid #333; 
+  border-top: 1px solid #333; 
+  border-left: 1px solid #333; 
+  margin-left: -1px; 
+  position: relative;
+  left: 0px; 
+  color:#888;
+}
+.tab [type=radio] {
+  display: none;   
+}
+.content {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  background: #444;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+  border-top: 1px solid #333; 
+  border-left: 1px solid #333; 
+}
+[type=radio]:checked ~ label {
+  background: linear-gradient(rgb(150,150,150), rgb(40,40,40));
+  border-bottom: 0px ;
+  z-index: 2;
+}
+[type=radio]:checked ~ label ~ .content {
+  z-index: 1;
+}
+
+    
+    
 

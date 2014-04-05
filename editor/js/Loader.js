@@ -8,6 +8,8 @@ var Loader = function ( editor ) {
 		var filename = file.name;
 		var extension = filename.split( '.' ).pop().toLowerCase();
 
+        NProgress.start();
+
 		switch ( extension ) {
 
 			case 'babylon':
@@ -148,14 +150,22 @@ var Loader = function ( editor ) {
 
 					var contents = event.target.result;
 
-					var object = new THREE.OBJLoader().parse( contents );
-					object.name = filename;
-
-					editor.addObject( object );
-					editor.select( object );
+    				var object = new THREE.OBJLoader().parse( contents );
+    				//var object = new THREE.AssimpJSONLoader().parse(  contents  );
+					
+                    object.traverse( function ( obj ) {
+                        if ( obj instanceof THREE.Mesh ){
+                            obj.name = filename;
+            			    editor.addObject( obj );
+        				    editor.select( obj );
+                        }
+                    });
+                        
 
 				}, false );
-				reader.readAsText( file );
+				timeout = setTimeout( function (){
+                    reader.readAsText( file );
+				},10);
 
 				break;
 
@@ -166,11 +176,10 @@ var Loader = function ( editor ) {
 
 					var contents = event.target.result;
 
-					console.log( contents );
-
 					var geometry = new THREE.PLYLoader().parse( contents );
 					geometry.sourceType = "ply";
 					geometry.sourceFile = file.name;
+                    geometry.computeFaceNormals();
 
 					var material = new THREE.MeshPhongMaterial();
 
@@ -195,14 +204,25 @@ var Loader = function ( editor ) {
 					var geometry = new THREE.STLLoader().parse( contents );
 					geometry.sourceType = "stl";
 					geometry.sourceFile = file.name;
+                    geometry.mergeVertices();
 
-					var material = new THREE.MeshPhongMaterial();
+					var material = new THREE.MeshNormalMaterial();
 
 					var mesh = new THREE.Mesh( geometry, material );
 					mesh.name = filename;
-
+                    /*
+                    for ( v = 0; v < obj.geometry.vertices.length; v ++ ) {
+                           obj.geometry.vertices[ v ].z = obj.geometry.vertices[ v ].z-obj.boundingBox.min.z;
+                    }
+                    obj.geometry.verticesNeedUpdate = true;
+                    obj.geometry.computeBoundingBox();
+                    */
+                    
 					editor.addObject( mesh );
 					editor.select( mesh );
+                    mesh.yup = true;
+                    mesh.rotation.x=deg2rad(-90);
+
 
 				}, false );
 
@@ -287,6 +307,7 @@ var Loader = function ( editor ) {
 				break;
 
 		}
+        NProgress.done(true);
 
 	}
 

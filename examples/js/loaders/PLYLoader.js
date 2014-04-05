@@ -135,6 +135,7 @@ THREE.PLYLoader.prototype = {
 		
 		for ( var i = 0; i < lines.length; i ++ ) {
 
+
 			var line = lines[ i ];
 			line = line.trim()
 			if ( line === "" ) { continue; }
@@ -270,7 +271,12 @@ THREE.PLYLoader.prototype = {
 		
 		for ( var i = 0; i < lines.length; i ++ ) {
 
-			var line = lines[ i ];
+            if( i/1000.0 == Math.floor(i/1000.0) ){
+                console.log( (i/lines.length), lines[ i ].charAt( 0 ) );
+            }
+
+
+            var line = lines[ i ];
 			line = line.trim()
 			if ( line === "" ) { continue; }
 			
@@ -338,7 +344,7 @@ THREE.PLYLoader.prototype = {
 		} else if ( elementName === "face" ) {
 
 			geometry.faces.push(
-				new THREE.Face3( element.vertex_indices[0], element.vertex_indices[1], element.vertex_indices[2] )
+				new THREE.Face3b( element.vertex_indices[0], element.vertex_indices[1], element.vertex_indices[2] )
 			);
 
 		}

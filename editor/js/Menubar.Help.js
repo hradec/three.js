@@ -21,7 +21,7 @@ Menubar.Help = function ( editor ) {
 
 	var menuConfig = [
 		createOption( 'Source code', onSourcecodeOptionClick ),
-		createOption( 'About', onAboutOptionClick )
+		createOption( 'Powered by Threejs!', onAboutOptionClick )
 	];
 
 	var optionsPanel = UI.MenubarHelper.createOptionsPanel( menuConfig );

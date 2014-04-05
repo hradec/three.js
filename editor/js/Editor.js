@@ -1,3 +1,14 @@
+
+var PI = 3.14159265359;
+function rad2deg(v){
+    return v*(180/PI);
+}
+function deg2rad(v){
+    return v*(PI/180);
+}
+
+
+
 var Editor = function () {
 
 	var SIGNALS = signals;
@@ -93,7 +104,12 @@ Editor.prototype = {
 		object.traverse( function ( child ) {
 
 			if ( child.geometry !== undefined ) scope.addGeometry( child.geometry );
-			if ( child.material !== undefined ) scope.addMaterial( child.material );
+			//if ( child.material !== undefined ) scope.addMaterial( child.material );
+            
+            // force material to be default to normal material
+            material = new THREE.MeshNormalMaterial();
+            child.material = material;
+            scope.addMaterial( material );
 
 			scope.addHelper( child );
 

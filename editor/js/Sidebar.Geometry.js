@@ -24,7 +24,7 @@ Sidebar.Geometry = function ( editor ) {
 	geometryUUIDRow.add( geometryUUID );
 	geometryUUIDRow.add( geometryUUIDRenew );
 
-	container.add( geometryUUIDRow );
+//	container.add( geometryUUIDRow );
 
 	// name
 

@@ -32,7 +32,8 @@ UI.Element.prototype = {
 
 	setDisabled: function ( value ) {
 
-		this.dom.disabled = value;
+    	this.dom.disabled = value;
+    	this.dom.disabled_bkp = value;
 
 		return this;
 
@@ -88,12 +89,15 @@ events.forEach( function ( event ) {
 
 // Panel
 
-UI.Panel = function () {
+UI.Panel = function (name) {
 
 	UI.Element.call( this );
+    
+    if(name == null)
+        name = 'Panel';
 
 	var dom = document.createElement( 'div' );
-	dom.className = 'Panel';
+	dom.className = name;
 
 	this.dom = dom;
 
@@ -136,6 +140,13 @@ UI.Panel.prototype.clear = function () {
 	}
 
 };
+
+
+
+
+
+
+
 
 // Text
 
@@ -481,7 +492,7 @@ UI.FancySelect.prototype.setValue = function ( value ) {
 
 UI.Checkbox = function ( boolean ) {
 
-	UI.Element.call( this );
+    UI.Element.call( this );
 
 	var scope = this;
 
@@ -515,6 +526,101 @@ UI.Checkbox.prototype.setValue = function ( value ) {
 	return this;
 
 };
+
+
+// Radio
+
+UI.Radio = function ( boolean, name, id ) {
+
+    UI.Element.call( this );
+
+    if(name == null)
+        name = 'Radio';
+        
+
+	var scope = this;
+
+	var dom = document.createElement( 'input' );
+	dom.name = name;
+	dom.type = 'radio';
+    if(id !== null)
+        dom.id = id;
+
+	this.dom = dom;
+	this.setValue( boolean );
+
+	return this;
+
+};
+
+UI.Radio.prototype = Object.create( UI.Element.prototype );
+
+UI.Radio.prototype.getValue = function () {
+
+	return this.dom.checked;
+
+};
+
+UI.Radio.prototype.setValue = function ( value ) {
+
+	if ( value !== undefined ) {
+
+		this.dom.checked = value;
+
+	}
+
+	return this;
+
+};
+
+
+// Tab
+
+
+UI.Tab = function () {
+
+    UI.Element.call( this );
+    
+	var dom = document.createElement( 'div' );
+	dom.className = "tabs";
+
+	this.dom = dom;
+    this.ntabs = 0;
+
+	return this;
+};
+
+UI.Tab.prototype = Object.create( UI.Element.prototype );
+
+UI.Tab.prototype.add = function (tabName, panel, selected) {
+    
+    var dom = document.createElement( 'div' );
+	dom.className = "tab";
+    
+    var radio  = document.createElement( 'input' );
+    radio.name = "tab-group-1";
+	radio.type = "radio";
+    radio.id   = "tab-"+this.ntabs;
+    radio.checked = selected;
+    dom.appendChild( radio );
+    
+    var label  = document.createElement( 'label' );
+    label.htmlFor = "tab-"+this.ntabs;
+    label.innerHTML= tabName;
+    dom.appendChild( label );
+
+    var content = document.createElement( 'div' );
+    content.className = "content";
+    content.appendChild( panel.dom );
+    dom.appendChild( content );
+    
+    this.dom.appendChild( dom );
+    this.ntabs++;
+	return this;
+
+};
+
+
 
 
 // Color
@@ -945,3 +1051,121 @@ UI.Button.prototype.setLabel = function ( value ) {
 	return this;
 
 };
+
+
+
+// IFrame
+
+UI.IFrame = function ( value ) {
+
+    UI.Element.call( this );
+
+	var scope = this;
+
+	var dom = document.createElement( 'iframe' );
+	dom.className = 'IFrame';
+
+	this.dom = dom;
+	this.dom.src = value;
+
+	return this;
+
+};
+
+UI.IFrame.prototype = Object.create( UI.Element.prototype );
+
+UI.IFrame.prototype.setURL = function ( value ) {
+
+	this.dom.src = value;
+
+	return this;
+
+};
+
+
+
+
+
+
+// CPanel
+UI.CPanel = function (name) {
+
+    UI.Element.call( this );
+    
+    if(name == null)
+        name = 'CPanel';
+
+    var dom = document.createElement( 'div' );
+	dom.className = name;
+
+	this.dom = dom;
+
+    self = this;
+    this.panel = new UI.Panel(name+'_subpanel');
+    this.panel.dom.style.display='block';
+    this.button = new UI.Text("- "+name).onClick( function () {
+        if(this.parent.panel.dom.style.display=='none') { 
+            this.setValue("- "+name)
+           this.parent.panel.dom.style.display='block'; 
+        }else{
+            this.setValue("+ "+name)
+            this.parent.panel.dom.style.display='none'; 
+        }
+    });
+    this.button.parent = this;
+
+    var space=new UI.Break();
+    var space2=new UI.Break();
+
+    //this.title = new UI.Text(name);    
+    this.dom.appendChild( this.button.dom );
+    this.dom.appendChild( this.panel.dom );
+    this.panel.dom.appendChild( space.dom );
+    this.panel.dom.appendChild( space2.dom );
+    
+    this.line = new UI.HorizontalRule();
+    this.dom.appendChild( this.line.dom );
+    
+
+
+
+	return this;
+};
+
+UI.CPanel.prototype = Object.create( UI.Element.prototype );
+
+UI.CPanel.prototype.add = function () {
+
+	for ( var i = 0; i < arguments.length; i ++ ) {
+
+		this.panel.add( arguments[ i ] );
+
+	}
+
+	return this;
+
+};
+
+
+UI.CPanel.prototype.remove = function () {
+
+	for ( var i = 0; i < arguments.length; i ++ ) {
+
+		this.panel.remove( arguments[ i ] );
+
+	}
+
+	return this;
+
+};
+
+UI.CPanel.prototype.clear = function () {
+
+	while ( this.dom.children.length ) {
+
+		this.panel.dom.removeChild( this.dom.lastChild );
+
+	}
+
+};
+

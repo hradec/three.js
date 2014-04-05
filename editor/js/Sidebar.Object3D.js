@@ -1,5 +1,6 @@
 Sidebar.Object3D = function ( editor ) {
 
+
 	var signals = editor.signals;
 
 	var container = new UI.Panel();
@@ -25,7 +26,7 @@ Sidebar.Object3D = function ( editor ) {
 	objectUUIDRow.add( objectUUID );
 	objectUUIDRow.add( objectUUIDRenew );
 
-	container.add( objectUUIDRow );
+	//container.add( objectUUIDRow );
 
 	// name
 
@@ -51,15 +52,43 @@ Sidebar.Object3D = function ( editor ) {
 
 	container.add( objectParentRow );
 
+    // Y up?
+
+	var objectYUPRow = new UI.Panel();
+	var objectYUPLock = new UI.Checkbox().setPosition( 'absolute' ).setLeft( '140px' ).onChange( update );
+
+	objectYUPRow.add( new UI.Text( 'is Geomerty Y up?' ).setWidth( '180px' ) );
+	objectYUPRow.add( objectYUPLock );
+
+	container.add( objectYUPRow );
+
+    var objectFloor = new UI.Button( 'Push vertices to the floor' ).setWidth( '260px' ).onClick( function () {
+        var obj = editor.selected;
+        obj.geometry.computeBoundingBox();
+        for ( v = 0; v < obj.geometry.vertices.length; v ++ ) {
+            if(obj.yup){
+               obj.geometry.vertices[ v ].z = obj.geometry.vertices[ v ].z-obj.geometry.boundingBox.min.z;
+            }else{
+               obj.geometry.vertices[ v ].y = obj.geometry.vertices[ v ].y-obj.geometry.boundingBox.min.y;
+            }
+        }
+        obj.geometry.verticesNeedUpdate = true;
+        obj.geometry.computeBoundingBox();
+        update();
+    } );
+    container.add( objectFloor );
+
+
 	// position
 
 	var objectPositionRow = new UI.Panel();
 	var objectPositionX = new UI.Number().setWidth( '50px' ).onChange( update );
 	var objectPositionY = new UI.Number().setWidth( '50px' ).onChange( update );
 	var objectPositionZ = new UI.Number().setWidth( '50px' ).onChange( update );
+    
 
 	objectPositionRow.add( new UI.Text( 'Position' ).setWidth( '90px' ) );
-	objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
+    objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
 
 	container.add( objectPositionRow );
 
@@ -79,6 +108,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	var objectScaleRow = new UI.Panel();
 	var objectScaleLock = new UI.Checkbox().setPosition( 'absolute' ).setLeft( '75px' );
+    objectScaleLock.setValue(true);
 	var objectScaleX = new UI.Number( 1 ).setWidth( '50px' ).onChange( updateScaleX );
 	var objectScaleY = new UI.Number( 1 ).setWidth( '50px' ).onChange( updateScaleY );
 	var objectScaleZ = new UI.Number( 1 ).setWidth( '50px' ).onChange( updateScaleZ );
@@ -187,7 +217,7 @@ Sidebar.Object3D = function ( editor ) {
 	objectVisibleRow.add( new UI.Text( 'Visible' ).setWidth( '90px' ) );
 	objectVisibleRow.add( objectVisible );
 
-	container.add( objectVisibleRow );
+	//container.add( objectVisibleRow );
 
 	// user data
 
@@ -213,8 +243,7 @@ Sidebar.Object3D = function ( editor ) {
 	objectUserDataRow.add( new UI.Text( 'User data' ).setWidth( '90px' ) );
 	objectUserDataRow.add( objectUserData );
 
-	container.add( objectUserDataRow );
-
+	//container.add( objectUserDataRow );
 
 	//
 
@@ -291,14 +320,20 @@ Sidebar.Object3D = function ( editor ) {
 			object.position.y = objectPositionY.getValue();
 			object.position.z = objectPositionZ.getValue();
 
-			object.rotation.x = objectRotationX.getValue();
-			object.rotation.y = objectRotationY.getValue();
-			object.rotation.z = objectRotationZ.getValue();
+			object.rotation.x = deg2rad(objectRotationX.getValue());
+			object.rotation.y = deg2rad(objectRotationY.getValue());
+			object.rotation.z = deg2rad(objectRotationZ.getValue());
 
 			object.scale.x = objectScaleX.getValue();
 			object.scale.y = objectScaleY.getValue();
 			object.scale.z = objectScaleZ.getValue();
-
+            
+            // auto-rotate 90o in case geometry is Y up
+            object.yup = objectYUPLock.getValue();
+            if ( objectYUPLock.getValue() === true ) {
+            	object.rotation.x = deg2rad(objectRotationX.getValue()-90);
+            }
+            
 			if ( object.fov !== undefined ) {
 
 				object.fov = objectFov.getValue();
@@ -483,14 +518,21 @@ Sidebar.Object3D = function ( editor ) {
 			objectPositionY.setValue( object.position.y );
 			objectPositionZ.setValue( object.position.z );
 
-			objectRotationX.setValue( object.rotation.x );
-			objectRotationY.setValue( object.rotation.y );
-			objectRotationZ.setValue( object.rotation.z );
+            // auto-rotate 90o in case geometry is Y up
+            objectYUPLock.setValue(object.yup);
+            if ( objectYUPLock.getValue() === true ) {
+        		objectRotationX.setValue( rad2deg(object.rotation.x)+90 );
+            }else{
+            	objectRotationX.setValue( rad2deg(object.rotation.x) );
+            }
+
+			objectRotationY.setValue( rad2deg(object.rotation.y) );
+			objectRotationZ.setValue( rad2deg(object.rotation.z) );
 
 			objectScaleX.setValue( object.scale.x );
 			objectScaleY.setValue( object.scale.y );
 			objectScaleZ.setValue( object.scale.z );
-
+            
 			if ( object.fov !== undefined ) {
 
 				objectFov.setValue( object.fov );

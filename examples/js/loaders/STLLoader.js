@@ -132,7 +132,7 @@ THREE.STLLoader.prototype.parseBinary = function (data) {
 		}
 
 		length = geometry.vertices.length;
-		geometry.faces.push(new THREE.Face3(length - 3, length - 2, length - 1, normal));
+		geometry.faces.push(new THREE.Face3b(length - 3, length - 2, length - 1, normal));
 
 	}
 
@@ -169,7 +169,7 @@ THREE.STLLoader.prototype.parseASCII = function (data) {
 
 		length = geometry.vertices.length;
 
-		geometry.faces.push( new THREE.Face3( length - 3, length - 2, length - 1, normal ) );
+		geometry.faces.push( new THREE.Face3b( length - 3, length - 2, length - 1, normal ) );
 
 	}
 

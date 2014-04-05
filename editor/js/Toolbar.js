@@ -23,12 +23,60 @@ var Toolbar = function ( editor ) {
 	} );
 	buttons.add( rotate );
 
-	var scale = new UI.Button( 'scale' ).onClick( function () {
+    var scale = new UI.Button( 'scale' ).onClick( function () {
 
 		signals.transformModeChanged.dispatch( 'scale' );
 
 	} );
 	buttons.add( scale );
+
+    var clone = new UI.Button( 'clone X' ).onClick( function () {
+
+//        signals.transformModeChanged.dispatch( 'clone' );
+
+		var object = editor.selected;
+
+		if ( object.parent === undefined ) return; // avoid cloning the camera or scene
+
+		nobject = object.clone();
+        nobject.yup = object.yup;
+    	editor.parent( nobject, editor.scene.getObjectById( object.parent.id, true ) );
+
+		editor.addObject( nobject );
+        nobject.position.x = nobject.position.x + (object.geometry.boundingBox.max.x-object.geometry.boundingBox.min.x)*nobject.scale.x+5;
+        console.log(object);
+
+        editor.select( nobject );
+
+
+	} );
+	buttons.add( clone );
+
+    var cloneZ = new UI.Button( 'clone Z' ).onClick( function () {
+
+//        signals.transformModeChanged.dispatch( 'clone' );
+
+		var object = editor.selected;
+
+		if ( object.parent === undefined ) return; // avoid cloning the camera or scene
+
+		nobject = object.clone();
+        nobject.yup = object.yup;
+        editor.parent( nobject, editor.scene.getObjectById( object.parent.id, true ) );
+
+		editor.addObject( nobject );
+        if( object.yup ){
+            nobject.position.z = nobject.position.z + (object.geometry.boundingBox.max.y-object.geometry.boundingBox.min.y)*nobject.scale.y+5;
+        }else{
+            nobject.position.z = nobject.position.z + (object.geometry.boundingBox.max.z-object.geometry.boundingBox.min.z)*nobject.scale.z+5;
+        }
+        console.log(object);
+
+        editor.select( nobject );
+
+	} );
+	buttons.add( cloneZ );
+
 
 	// grid
 
@@ -37,7 +85,7 @@ var Toolbar = function ( editor ) {
 	buttons.add( new UI.Text( 'Grid: ' ) );
 	buttons.add( grid );
 
-	var snap = new UI.Checkbox( false ).onChange( update );
+	var snap = new UI.Checkbox( false ).onChange( update ).setValue(true);
 	buttons.add( snap );
 	buttons.add( new UI.Text( 'snap' ) );
 

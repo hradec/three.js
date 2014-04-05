@@ -9,6 +9,7 @@ THREE.EditorControls = function ( object, domElement ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;
 
+
 	// API
 
 	this.enabled = true;
@@ -31,22 +32,48 @@ THREE.EditorControls = function ( object, domElement ) {
 
 	var changeEvent = { type: 'change' };
 
-	this.focus = function ( target, frame ) {
+	this.focus = function ( _target, frame ) {
 
 		var scale = new THREE.Vector3();
-		target.matrixWorld.decompose( center, new THREE.Quaternion(), scale );
-
-		if ( frame && target.geometry ) {
-
-			scale = ( scale.x + scale.y + scale.z ) / 3;
-			center.add(target.geometry.boundingSphere.center.clone().multiplyScalar( scale ));
-			var radius = target.geometry.boundingSphere.radius * ( scale );
-			var pos = object.position.clone().sub( center ).normalize().multiplyScalar( radius * 2 );
-			object.position.copy( center ).add( pos );
-
-		}
-
-		object.lookAt( center );
+        var apos = new THREE.Vector3(0,0,0);
+        var _center = new center.clone();
+        var radius = 1;
+        center.x = 0;
+        center.y = 0;
+        center.z = 0;
+        
+        if(_target !== null){
+            var ztarget = _target;
+            if( !(_target instanceof Array) )
+                ztarget = [_target];
+    
+            
+            for (var i=0; i<ztarget.length; i++) {
+                target = ztarget[i];
+                if ( frame && target.geometry ) {
+                    var __center = new _center.clone();
+            		target.matrixWorld.decompose( __center, new THREE.Quaternion(), scale );
+                    scale = ( scale.x + scale.y + scale.z ) / 3;
+                    __center.add(target.geometry.boundingSphere.center.clone().multiplyScalar( scale ));
+        			//if( target.geometry.boundingSphere.radius * ( scale ) > radius )
+                        radius = target.geometry.boundingSphere.radius * ( scale );
+                    center.x += __center.x;
+                    center.y += __center.y;
+                    center.z += __center.z;
+                }
+            }
+            center.x /= ztarget.length;
+            center.y /= ztarget.length;
+            center.z /= ztarget.length
+            console.log(center);
+            apos = object.position.clone().sub( center ).normalize().multiplyScalar( (radius) * 3 );
+        }else{
+            apos.x=500;
+            apos.y=250;
+            apos.z=500;
+        }
+        object.position.copy( center ).add( apos );
+    	object.lookAt( center );
 
 		scope.dispatchEvent( changeEvent );
 

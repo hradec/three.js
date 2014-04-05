@@ -42,7 +42,7 @@ THREE.OBJLoader.prototype = {
 
 		function face3( a, b, c, normals ) {
 
-			return new THREE.Face3( a, b, c, normals );
+			return new THREE.Face3b( a, b, c, normals );
 
 		}
 		
@@ -191,122 +191,125 @@ THREE.OBJLoader.prototype = {
 		var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/
 
 		//
-
 		var lines = text.split( '\n' );
-
-		for ( var i = 0; i < lines.length; i ++ ) {
-
-			var line = lines[ i ];
-			line = line.trim();
-
-			var result;
-
-			if ( line.length === 0 || line.charAt( 0 ) === '#' ) {
-
-				continue;
-
-			} else if ( ( result = vertex_pattern.exec( line ) ) !== null ) {
-
-				// ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-				vertices.push( 
-					geometry.vertices.push(
-						vector(
-							result[ 1 ], result[ 2 ], result[ 3 ]
-						)
-					)
-				);
-
-			} else if ( ( result = normal_pattern.exec( line ) ) !== null ) {
-
-				// ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-				normals.push(
-					vector(
-						result[ 1 ], result[ 2 ], result[ 3 ]
-					)
-				);
-
-			} else if ( ( result = uv_pattern.exec( line ) ) !== null ) {
-
-				// ["vt 0.1 0.2", "0.1", "0.2"]
-
-				uvs.push(
-					uv(
-						result[ 1 ], result[ 2 ]
-					)
-				);
-
-			} else if ( ( result = face_pattern1.exec( line ) ) !== null ) {
-
-				// ["f 1 2 3", "1", "2", "3", undefined]
-
-				handle_face_line(
-					[ result[ 1 ], result[ 2 ], result[ 3 ], result[ 4 ] ]
-				);
-
-			} else if ( ( result = face_pattern2.exec( line ) ) !== null ) {
-
-				// ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
-				
-				handle_face_line(
-					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
-					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //uv
-				);
-
-			} else if ( ( result = face_pattern3.exec( line ) ) !== null ) {
-
-				// ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
-
-				handle_face_line(
-					[ result[ 2 ], result[ 6 ], result[ 10 ], result[ 14 ] ], //faces
-					[ result[ 3 ], result[ 7 ], result[ 11 ], result[ 15 ] ], //uv
-					[ result[ 4 ], result[ 8 ], result[ 12 ], result[ 16 ] ] //normal
-				);
-
-			} else if ( ( result = face_pattern4.exec( line ) ) !== null ) {
-
-				// ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
-
-				handle_face_line(
-					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
-					[ ], //uv
-					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //normal
-				);
-
-			} else if ( /^o /.test( line ) ) {
-
-				geometry = new THREE.Geometry();
-				material = new THREE.MeshLambertMaterial();
-
-				mesh = new THREE.Mesh( geometry, material );
-				mesh.name = line.substring( 2 ).trim();
-				object.add( mesh );
-
-			} else if ( /^g /.test( line ) ) {
-
-				// group
-
-			} else if ( /^usemtl /.test( line ) ) {
-
-				// material
-
-				material.name = line.substring( 7 ).trim();
-
-			} else if ( /^mtllib /.test( line ) ) {
-
-				// mtl file
-
-			} else if ( /^s /.test( line ) ) {
-
-				// smooth shading
-
-			} else {
-
-				// console.log( "THREE.OBJLoader: Unhandled line " + line );
-
-			}
-
+    	
+        for ( var i = 0; i < lines.length; i ++ ) {
+                
+                if( i/10000.0 == Math.floor(i/10000.0) ){
+                      console.log( (i/lines.length), lines[ i ].charAt( 0 ) );
+                }
+    
+    			var line = lines[ i ];
+    			line = line.trim();
+    
+    			var result;
+    
+    			if ( line.length === 0 || line.charAt( 0 ) === '#' ) {
+    
+    				continue;
+    
+    			} else if ( ( result = vertex_pattern.exec( line ) ) !== null ) {
+    
+    				// ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+                    
+    				vertices.push( 
+    					geometry.vertices.push(
+    						vector(
+    							result[ 1 ], result[ 2 ], result[ 3 ]
+    						)
+    					)
+    				);
+    /*
+    			} else if ( ( result = normal_pattern.exec( line ) ) !== null ) {
+    
+    				// ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+    
+    				normals.push(
+    					vector(
+    						result[ 1 ], result[ 2 ], result[ 3 ]
+    					)
+    				);
+    
+    			} else if ( ( result = uv_pattern.exec( line ) ) !== null ) {
+    
+    				// ["vt 0.1 0.2", "0.1", "0.2"]
+    
+    				uvs.push(
+    					uv(
+    						result[ 1 ], result[ 2 ]
+    					)
+    				);
+    */
+    			} else if ( ( result = face_pattern1.exec( line ) ) !== null ) {
+    
+    				// ["f 1 2 3", "1", "2", "3", undefined]
+    
+    				handle_face_line(
+    					[ result[ 1 ], result[ 2 ], result[ 3 ], result[ 4 ] ]
+    				);
+    
+    			} else if ( ( result = face_pattern2.exec( line ) ) !== null ) {
+    
+    				// ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
+    				
+    				handle_face_line(
+    					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
+    					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //uv
+    				);
+    
+    			} else if ( ( result = face_pattern3.exec( line ) ) !== null ) {
+    
+    				// ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
+    
+    				handle_face_line(
+    					[ result[ 2 ], result[ 6 ], result[ 10 ], result[ 14 ] ], //faces
+    					[ result[ 3 ], result[ 7 ], result[ 11 ], result[ 15 ] ], //uv
+    					[ result[ 4 ], result[ 8 ], result[ 12 ], result[ 16 ] ] //normal
+    				);
+    
+    			} else if ( ( result = face_pattern4.exec( line ) ) !== null ) {
+    
+    				// ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
+    
+    				handle_face_line(
+    					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
+    					[ ], //uv
+    					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //normal
+    				);
+    
+    			} else if ( /^o /.test( line ) ) {
+    
+    				geometry = new THREE.Geometry();
+    				material = new THREE.MeshLambertMaterial();
+    
+    				mesh = new THREE.Mesh( geometry, material );
+    				mesh.name = line.substring( 2 ).trim();
+    				object.add( mesh );
+    
+    			} else if ( /^g /.test( line ) ) {
+    
+    				// group
+    
+    			} else if ( /^usemtl /.test( line ) ) {
+    
+    				// material
+    
+    				material.name = line.substring( 7 ).trim();
+    
+    			} else if ( /^mtllib /.test( line ) ) {
+    
+    				// mtl file
+    
+    			} else if ( /^s /.test( line ) ) {
+    
+    				// smooth shading
+    
+    			} else {
+    
+    				// console.log( "THREE.OBJLoader: Unhandled line " + line );
+    
+    			}
+    
 		}
 
 		var children = object.children;
@@ -315,12 +318,13 @@ THREE.OBJLoader.prototype = {
 
 			var geometry = children[ i ].geometry;
 
+            geometry.mergeVertices();
 			geometry.computeFaceNormals();
-			geometry.computeBoundingSphere();
+
+			//geometry.computeBoundingSphere();
 
 		}
-		
-		return object;
+  		return object;
 
 	}
 

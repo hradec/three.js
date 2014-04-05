@@ -25,8 +25,13 @@ var Viewport = function ( editor ) {
 	sceneHelpers.add( grid );
 
 	//
+    
+    var SCREEN_WIDTH = window.innerWidth;
+    var SCREEN_HEIGHT = window.innerHeight;
 
 	var camera = new THREE.PerspectiveCamera( 50, 1, 1, 5000 );
+    //camera = new THREE.OrthographicCamera( -SCREEN_WIDTH/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, -SCREEN_HEIGHT/2, -0.5, 5000 );
+
 	camera.position.fromArray( editor.config.getKey( 'camera' ).position );
 	camera.lookAt( new THREE.Vector3().fromArray( editor.config.getKey( 'camera' ).target ) );
 
@@ -120,7 +125,8 @@ var Viewport = function ( editor ) {
 		if ( onMouseDownPosition.distanceTo( onMouseUpPosition ) == 0 ) {
 
 			var intersects = getIntersects( event, objects );
-
+            
+            console.log(intersects)
 			if ( intersects.length > 0 ) {
 
 				var object = intersects[ 0 ].object;
@@ -177,6 +183,27 @@ var Viewport = function ( editor ) {
 		signals.cameraChanged.dispatch( camera );
 
 	} );
+    
+    document.addEventListener( 'keydown', function ( event ) {
+            	var signals = editor.signals;
+
+				switch ( event.keyCode ) {
+                    case 70:
+                        controls.focus( editor.selected, true );
+                        break;
+                    case 65:
+                        if(editor.scene.children.length > 0){
+                            //console.log(editor.scene);
+                            controls.focus( editor.scene.children, true );
+                        }else{
+                            controls.focus( null );
+                        }
+                        break;
+
+				}
+
+			}, false );
+
 
 	// signals
 
