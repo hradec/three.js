@@ -9,14 +9,26 @@
 		<link href="css/types.css" rel="stylesheet" />
 		<link id="theme" href="css/light.css" rel="stylesheet" />
 
-		<script src="../build/three.min.js"></script>
+        <script src="../google/client_secret_263148663514-sat9jk1c4fffa89hgonuamrt055b7l5v.apps.googleusercontent.com.json"></script>
+
+        <script src="../pace/pace.minn.js"></script>
+        <link href="../pace/bigcounter.css" rel="stylesheet" />
+        
+        <script src="../nprogress/jquery-2.0.js"></script>
+        <script src="../nprogress/nprogress-0.1.2/nprogress.js"></script>
+        <link href="../nprogress/nprogress-0.1.2/nprogress.css" rel="stylesheet" />
+        
+    	<script src="../build/three.min.js"></script>
+    	<script src="../build/screenfull.min.js"></script>
+        
 		<script src="../examples/js/libs/system.min.js"></script>
 
 		<script src="../examples/js/controls/EditorControls.js"></script>
 		<script src="../examples/js/controls/TransformControls.js"></script>
 		<script src="../examples/js/loaders/BabylonLoader.js"></script>
 		<script src="../examples/js/loaders/ColladaLoader.js"></script>
-		<script src="../examples/js/loaders/OBJLoader.js"></script>
+    	<script src="../examples/js/loaders/OBJLoader.js"></script>
+    	<script src="../examples/js/loaders/AssimpJSONLoader.js"></script>
 		<script src="../examples/js/loaders/PLYLoader.js"></script>
 		<script src="../examples/js/loaders/STLLoader.js"></script>
 		<script src="../examples/js/loaders/UTF8Loader.js"></script>
@@ -60,7 +72,8 @@
 		<script src="js/Menubar.View.js"></script>
 		<script src="js/Menubar.Help.js"></script>
 		<script src="js/Sidebar.js"></script>
-		<script src="js/Sidebar.Renderer.js"></script>
+    	<script src="js/Sidebar.Renderer.js"></script>
+    	<script src="js/Sidebar.Print.js"></script>
 		<script src="js/Sidebar.Scene.js"></script>
 		<script src="js/Sidebar.Object3D.js"></script>
 		<script src="js/Sidebar.Geometry.js"></script>
@@ -76,9 +89,113 @@
 		<script src="js/Sidebar.Material.js"></script>
 		<script src="js/Toolbar.js"></script>
 		<script src="js/Viewport.js"></script>
+        <script src="../examples/js/Detector.js"></script>
+    	<script src="../examples/js/libs/stats.min.js"></script>
 
 		<script>
+        
+        
+        
 
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200){
+                aCallback(anHttpRequest.responseText);
+            }
+        }
+        
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+}
+
+
+//https://accounts.google.com/o/oauth2/auth?scope=email%20profile&%20state=%2Fprofile&redirect_uri=https://www.chemshapes.com/oauth2callback&response_type=code&client_id=263148663514-icckrrak5ifmdfj70r2da7qe8r79t1ku.apps.googleusercontent.com&approval_prompt=force
+
+
+function ping(ip, callback) {
+
+  if(!this.inUse) {
+
+    this.inUse = true;
+    this.callback = callback
+    this.ip = ip;
+
+    var _that = this;
+
+    this.img = new Image();
+
+    this.img.onload = this.callback;
+    this.img.onerror = this.callback;
+
+    this.start = new Date().getTime();
+    this.img.src = "http://" + ip;
+    this.timer = setTimeout(function() { }, 1500);
+
+  }
+}
+
+
+NProgress.configure({ showSpinner: true });
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Face3b = function ( a, b, c, normal, color, materialIndex ) {
+
+    this.a = a;
+	this.b = b;
+	this.c = c;
+
+	this.normal = normal instanceof THREE.Vector3 ? normal : new THREE.Vector3();
+
+    this.vertexNormals = normal instanceof Array ? normal : [ ];
+
+//	this.color = color instanceof THREE.Color ? color : new THREE.Color();
+//	this.vertexColors = color instanceof Array ? color : [];
+
+//	this.vertexTangents = [];
+
+//	this.materialIndex = materialIndex !== undefined ? materialIndex : 0;
+
+};
+
+THREE.Face3b.prototype = {
+
+	constructor: THREE.Face3,
+
+	clone: function () {
+
+		var face = new THREE.Face3( this.a, this.b, this.c );
+
+		face.normal.copy( this.normal );
+		face.color.copy( this.color );
+
+		face.materialIndex = this.materialIndex;
+
+		var i, il;
+		for ( i = 0, il = this.vertexNormals.length; i < il; i ++ ) face.vertexNormals[ i ] = this.vertexNormals[ i ].clone();
+		for ( i = 0, il = this.vertexColors.length; i < il; i ++ ) face.vertexColors[ i ] = this.vertexColors[ i ].clone();
+		for ( i = 0, il = this.vertexTangents.length; i < il; i ++ ) face.vertexTangents[ i ] = this.vertexTangents[ i ].clone();
+
+        return face;
+
+	}
+
+};
+
+       
+
+
+
+    		if ( ! Detector.webgl ) {
+				Detector.addGetWebGLMessage();
+			}
+		
 			window.URL = window.URL || window.webkitURL;
 			window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
@@ -95,8 +212,6 @@
 
 			var sidebar = new Sidebar( editor ).setId( 'sidebar' );
 			document.body.appendChild( sidebar.dom );
-
-			//
 
 			editor.setTheme( editor.config.getKey( 'theme' ) );
 
@@ -128,6 +243,11 @@
 				var timeout;
 				var exporter = new THREE.ObjectExporter();
 
+    			var signals = editor.signals;
+
+                
+                // savestate saves the scene from time to time, 
+                // but degrades performance greatly when it has big objects
 				var saveState = function ( scene ) {
 
 					clearTimeout( timeout );
@@ -136,18 +256,16 @@
 
 						editor.storage.set( exporter.parse( editor.scene ) );
 
-					}, 1000 );
+					}, 1 );
 
 				};
 
-				var signals = editor.signals;
-
-				signals.objectAdded.add( saveState );
-				signals.objectChanged.add( saveState );
-				signals.objectRemoved.add( saveState );
-				signals.materialChanged.add( saveState );
-				signals.sceneGraphChanged.add( saveState );
-
+				//signals.objectAdded.add( saveState );
+				//signals.objectChanged.add( saveState );
+				//signals.objectRemoved.add( saveState );
+				//signals.materialChanged.add( saveState );
+				//signals.sceneGraphChanged.add( saveState );
+                
 			} );
 
 			//
@@ -167,6 +285,7 @@
 			}, false );
 
 			document.addEventListener( 'keydown', function ( event ) {
+        		var signals = editor.signals;
 
 				switch ( event.keyCode ) {
 
@@ -177,7 +296,26 @@
 						editor.removeObject( editor.selected );
 						editor.deselect();
 						break;
-
+                        
+                    // maya shortcuts for translate/rotate/scale tools
+                    case 87:
+                        signals.transformModeChanged.dispatch( 'translate' );
+                        break;
+                    case 82:
+                        signals.transformModeChanged.dispatch( 'scale' );
+                        break;
+                    case 69:
+                        signals.transformModeChanged.dispatch( 'rotate' );
+                        break;
+                    case 70:
+                        //controls.focus( editor.selected );
+                        break;
+                    case 65:
+                        //controls.focus( editor.selected );
+                        break;
+                    case 192:
+                        screenfull.toggle(document.body);
+                        break;
 				}
 
 			}, false );
@@ -191,6 +329,34 @@
 			window.addEventListener( 'resize', onWindowResize, false );
 
 			onWindowResize();
+
+            var online = new Event('printerOnline');
+            var offline = new Event('printerOffline');
+            window.printer_online = false;    
+            window.printer_online_counter = 0;    
+            setInterval(function(){
+                window.printer_online_counter++;
+                aClient = new HttpClient();
+                aClient.get('http://pi3dprint.local/status', function(answer) {
+                    window.printer_online_counter=0;
+                });
+                window.printer_online = true; 
+                if(window.printer_online_counter>3){
+                    window.printer_online = false; 
+                }
+                //console.log(window.printer_online_counter);
+                //console.log("printer_online", window.printer_online);
+                
+                if (window.printer_online==true){
+                    document.dispatchEvent(online);
+                    document.getElementById("menubar").style.backgroundImage = "url('./images/cute_ball_go.png')";
+                }else{
+                    document.dispatchEvent(offline);
+                    document.getElementById("menubar").style.backgroundImage = "url('./images/cute_ball_shutdown.png')";
+                }
+                
+            },3000);
+
 
 		</script>
 	</body>
