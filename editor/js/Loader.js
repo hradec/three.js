@@ -204,7 +204,7 @@ var Loader = function ( editor ) {
 					var geometry = new THREE.STLLoader().parse( contents );
 					geometry.sourceType = "stl";
 					geometry.sourceFile = file.name;
-                    geometry.mergeVertices();
+                    //geometry.mergeVertices();
 
 					var material = new THREE.MeshNormalMaterial();
 

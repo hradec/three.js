@@ -1,10 +1,11 @@
 * {
 	vertical-align: middle;
-    border-color: #111;
+    /*font-size: 97%*/
 }
 
 	/* Webkit micro scrollbars */
 /*
+    border-color: #111;
 	::-webkit-scrollbar {
 		width:9px;
 	}
@@ -31,9 +32,10 @@
 */
 body {
 	font-family: Arial, sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 	margin: 0;
 	overflow: hidden;
+
 }
 
 hr {
@@ -41,6 +43,7 @@ hr {
 	border-top: 2px solid #111;
     color: #111;    
     background-color: #111;
+
 }
 
 button {
@@ -98,12 +101,13 @@ input.Number {
 }
 
 #viewport {
-	position: absolute;
-	top: 32px;
+    position: absolute;
+    top: 32px;
 	left: 0px;
-	right: 300px;
-	bottom: 32px;
+	width: 100%;
+	bottom: 0px;
 }
+
 
 #menubar {
 	position: absolute;
@@ -170,6 +174,7 @@ input.Number {
 	background-color: #111;
 	overflow: auto;
     border-left: 1px solid #333; 
+        zoom: 80%;
 
 }
 
@@ -210,6 +215,8 @@ input.Number {
 	height: 32px;
 	background-color: #444;
 	color: #ddd;
+    zoom: 80%;
+
 }
 
 	#toolbar .Panel {
