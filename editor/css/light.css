@@ -27,6 +27,11 @@ button:active {
     background: -webkit-linear-gradient(top,rgba(255,255,255,0) 100%, rgba(255,255,255,1) 0%);    
 }
 
+textarea {
+	white-space: pre;
+	word-wrap: normal;
+}
+
 .Panel {
     -moz-user-select: none;
 	-webkit-user-select: none;
@@ -44,6 +49,28 @@ button:active {
 	/* No support for these yet */
 	-o-user-select: none;
 	user-select: none;
+}
+
+.CollapsiblePanel .CollapsiblePanelButton {
+	float: left;
+	margin-right: 6px;
+	width: 0px;
+	height: 0px;
+	border: 6px solid transparent;
+}
+
+.CollapsiblePanel.collapsed .CollapsiblePanelButton {
+	margin-top: 2px;
+	border-left-color: #bbb;
+}
+
+.CollapsiblePanel:not(.collapsed) .CollapsiblePanelButton {
+	margin-top: 6px;
+	border-top-color: #bbb;
+}
+
+.CollapsiblePanel.collapsed .CollapsibleContent {
+	display: none;
 }
 
 .FancySelect {
@@ -167,6 +194,10 @@ input.Number {
 		color: #888;
         padding: 10px;
 		border-top: 1px solid #ccc;
+	}
+
+    #sidebar .Panel.collapsed {
+		margin-bottom: 0px;
 	}
 
     #sidebar .Panel2 {

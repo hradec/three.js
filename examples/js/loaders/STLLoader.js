@@ -50,7 +50,7 @@ THREE.STLLoader.prototype.load = function ( url, callback ) {
 
 		} else {
 
-			scope.dispatchEvent( { type: 'error', message: 'Couldn\'t load URL [' + url + ']', response: event.target.responseText } );
+			scope.dispatchEvent( { type: 'error', message: 'Couldn\'t load URL [' + url + ']', response: event.target.statusText } );
 
 		}
 
@@ -106,11 +106,12 @@ THREE.STLLoader.prototype.parseBinary = function ( data ) {
 	var dataOffset = 84;
 	var faceLength = 12 * 4 + 2;
 
+	var offset = 0;
+
+	var geometry = new THREE.BufferGeometry();
+
 	var vertices = new Float32Array( faces * 3 * 3 );
 	var normals = new Float32Array( faces * 3 * 3 );
-	var uvs = new Float32Array( faces * 3 * 2 );
-
-	var offset = 0;
 
 	for ( var face = 0; face < faces; face ++ ) {
 
@@ -138,7 +139,10 @@ THREE.STLLoader.prototype.parseBinary = function ( data ) {
 
 	}
 
-	return new THREE.Geometry2( vertices, normals, uvs );
+	geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+	geometry.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
+
+	return geometry;
 
 };
 
