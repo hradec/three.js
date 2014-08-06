@@ -43,8 +43,8 @@
 
 		<script id="vertexShader" type="x-shader/x-vertex">
 
-			precision highp float;
-			precision highp int;
+			precision mediump float;
+			precision mediump int;
 
 			uniform mat4 modelViewMatrix; // optional
 			uniform mat4 projectionMatrix; // optional
@@ -68,8 +68,8 @@
 
 		<script id="fragmentShader" type="x-shader/x-fragment">
 
-			precision highp float;
-			precision highp int;
+			precision mediump float;
+			precision mediump int;
 
 			uniform float time;
 
@@ -113,7 +113,7 @@
 
 				var geometry = new THREE.BufferGeometry();
 
-				var vertices = new THREE.Float32Attribute( triangles * 3, 3 );
+				var vertices = new THREE.BufferAttribute( new Float32Array( triangles * 3 * 3 ), 3 );
 
 				for ( var i = 0; i < vertices.length; i ++ ) {
 
@@ -123,7 +123,7 @@
 
 				geometry.addAttribute( 'position', vertices );
 
-				var colors = new THREE.Float32Attribute( triangles * 3, 4 );
+				var colors = new THREE.BufferAttribute(new Float32Array( triangles * 3 * 4 ), 4 );
 
 				for ( var i = 0; i < colors.length; i ++ ) {
 
