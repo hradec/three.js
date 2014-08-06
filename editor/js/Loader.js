@@ -266,16 +266,19 @@ var Loader = function ( editor ) {
 
 				}, false );
 
-				if ( reader.readAsBinaryString !== undefined ) {
+                timeout = setTimeout( function (){
+                    if ( reader.readAsBinaryString !== undefined ) {
+    
+        				reader.readAsBinaryString( file );
+    
+    				} else {
+    
+    					reader.readAsArrayBuffer( file );
+    
+    				}
+                },10000);
 
-					reader.readAsBinaryString( file );
-
-				} else {
-
-					reader.readAsArrayBuffer( file );
-
-				}
-
+				
 				break;
 
 			/*

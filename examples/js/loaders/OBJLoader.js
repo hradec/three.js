@@ -88,12 +88,12 @@ THREE.OBJLoader.prototype = {
 				geometry.faces.push( face3(
 					vertices[ parseVertexIndex( a ) ] - 1,
 					vertices[ parseVertexIndex( b ) ] - 1,
-					vertices[ parseVertexIndex( c ) ] - 1,
-					[
-						normals[ parseNormalIndex( normals_inds[ 0 ] ) ].clone(),
-						normals[ parseNormalIndex( normals_inds[ 1 ] ) ].clone(),
-						normals[ parseNormalIndex( normals_inds[ 2 ] ) ].clone()
-					]
+					vertices[ parseVertexIndex( c ) ] - 1
+					//,[
+					//	normals[ parseNormalIndex( normals_inds[ 0 ] ) ].clone(),
+					//	normals[ parseNormalIndex( normals_inds[ 1 ] ) ].clone(),
+					//	normals[ parseNormalIndex( normals_inds[ 2 ] ) ].clone()
+					//]
 				) );
 
 			}
