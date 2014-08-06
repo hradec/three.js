@@ -32,8 +32,6 @@ THREE.Material = function () {
 
 	this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
 
-	this.visible = true;
-
 	this.needsUpdate = true;
 
 };
@@ -52,7 +50,7 @@ THREE.Material.prototype = {
 
 			if ( newValue === undefined ) {
 
-				console.warn( 'THREE.Material: \'' + key + '\' parameter is undefined.' );
+				console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
 				continue;
 
 			}
@@ -69,10 +67,10 @@ THREE.Material.prototype = {
 
 					currentValue.copy( newValue );
 
-				} else if ( key == 'overdraw') {
+				} else if ( key == 'overdraw' ) {
 
 					// ensure overdraw is backwards-compatable with legacy boolean type
-					this[ key ] = Number(newValue);
+					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -113,8 +111,6 @@ THREE.Material.prototype = {
 		material.alphaTest = this.alphaTest;
 
 		material.overdraw = this.overdraw;
-
-		material.visible = this.visible;
 
 		return material;
 

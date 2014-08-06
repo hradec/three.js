@@ -2,6 +2,16 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
+THREE.SVGObject = function ( node ) {
+
+	THREE.Object3D.call( this );
+
+	this.node = node;
+
+};
+
+THREE.SVGObject.prototype = Object.create( THREE.Object3D.prototype );
+
 THREE.SVGRenderer = function () {
 
 	console.log( 'THREE.SVGRenderer', THREE.REVISION );
@@ -23,10 +33,14 @@ THREE.SVGRenderer = function () {
 	_directionalLights = new THREE.Color(),
 	_pointLights = new THREE.Color(),
 	_clearColor = new THREE.Color(),
+	_clearAlpha = 1,
 
 	_w, // z-buffer to w-buffer
 	_vector3 = new THREE.Vector3(), // Needed for PointLight
 	_centroid = new THREE.Vector3(),
+
+	_viewMatrix = new THREE.Matrix4(),
+	_viewProjectionMatrix = new THREE.Matrix4(),
 
 	_svgPathPool = [], _svgLinePool = [], _svgRectPool = [],
 	_svgNode, _pathCount = 0, _lineCount = 0, _rectCount = 0,
@@ -67,7 +81,8 @@ THREE.SVGRenderer = function () {
 
 	this.setClearColor = function ( color, alpha ) {
 
-		_clearColor.set(color);
+		_clearColor.set( color );
+		_clearAlpha = alpha !== undefined ? alpha : 1;
 
 	};
 
@@ -97,7 +112,7 @@ THREE.SVGRenderer = function () {
 
 		}
 		
-		_svg.style.backgroundColor = _clearColor.getStyle();
+		_svg.style.backgroundColor = 'rgba(' + ( ( _clearColor.r * 255 ) | 0 ) + ',' + ( ( _clearColor.g * 255 ) | 0 ) + ',' + ( ( _clearColor.b * 255 ) | 0 ) + ',' + _clearAlpha + ')';
 
 	};
 
@@ -114,6 +129,9 @@ THREE.SVGRenderer = function () {
 
 		_this.info.render.vertices = 0;
 		_this.info.render.faces = 0;
+
+		_viewMatrix.copy( camera.matrixWorldInverse.getInverse( camera.matrixWorld ) );
+		_viewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, _viewMatrix );
 
 		_renderData = _projector.projectScene( scene, camera, this.sortObjects, this.sortElements );
 		_elements = _renderData.elements;
@@ -179,6 +197,25 @@ THREE.SVGRenderer = function () {
 			}
 
 		}
+
+		scene.traverseVisible( function ( object ) {
+
+			 if ( object instanceof THREE.SVGObject ) {
+
+				_vector3.setFromMatrixPosition( object.matrixWorld );
+				_vector3.applyProjection( _viewProjectionMatrix );
+
+				var x =   _vector3.x * _svgWidthHalf;
+				var y = - _vector3.y * _svgHeightHalf;
+
+			 	var node = object.node;
+				node.setAttribute( 'transform', 'translate(' + x + ',' + y + ')' );
+
+				_svg.appendChild( node );
+
+			}
+
+		} );
 
 	};
 

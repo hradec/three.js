@@ -106,7 +106,17 @@ UI.Panel.prototype.add = function () {
 
 	for ( var i = 0; i < arguments.length; i ++ ) {
 
-		this.dom.appendChild( arguments[ i ].dom );
+		var argument = arguments[ i ];
+
+		if ( argument instanceof UI.Element ) {
+
+			this.dom.appendChild( argument.dom );
+
+		} else {
+
+			console.error( 'UI.Panel:', argument, 'is not an instance of UI.Element.' )
+
+		}
 
 	}
 
@@ -118,8 +128,18 @@ UI.Panel.prototype.add = function () {
 UI.Panel.prototype.remove = function () {
 
 	for ( var i = 0; i < arguments.length; i ++ ) {
+	
+		var argument = arguments[ i ];
 
-		this.dom.removeChild( arguments[ i ].dom );
+		if ( argument instanceof UI.Element ) {
+
+			this.dom.removeChild( argument.dom );
+
+		} else {
+
+			console.error( 'UI.Panel:', argument, 'is not an instance of UI.Element.' )
+
+		}
 
 	}
 
@@ -134,6 +154,134 @@ UI.Panel.prototype.clear = function () {
 		this.dom.removeChild( this.dom.lastChild );
 
 	}
+
+};
+
+
+// Collapsible Panel
+
+UI.CollapsiblePanel = function () {
+
+	UI.Panel.call( this );
+
+	this.dom.className = 'Panel CollapsiblePanel';
+
+	this.button = document.createElement( 'div' );
+	this.button.className = 'CollapsiblePanelButton';
+	this.dom.appendChild( this.button );
+
+	var scope = this;
+	this.button.addEventListener( 'click', function ( event ) {
+
+		scope.toggle();
+
+	}, false );
+
+	this.content = document.createElement( 'div' );
+	this.content.className = 'CollapsibleContent';
+	this.dom.appendChild( this.content );
+
+	this.isCollapsed = false;
+
+	return this;
+
+};
+
+UI.CollapsiblePanel.prototype = Object.create( UI.Panel.prototype );
+
+UI.CollapsiblePanel.prototype.addStatic = function () {
+
+	for ( var i = 0; i < arguments.length; i ++ ) {
+
+		this.dom.insertBefore( arguments[ i ].dom, this.content );
+
+	}
+
+	return this;
+
+};
+
+UI.CollapsiblePanel.prototype.removeStatic = UI.Panel.prototype.remove;
+
+UI.CollapsiblePanel.prototype.clearStatic = function () {
+
+	this.dom.childNodes.forEach( function ( child ) {
+
+		if ( child !== this.content ) {
+
+			this.dom.removeChild( child );
+
+		}
+
+	});
+
+};
+
+UI.CollapsiblePanel.prototype.add = function () {
+
+	for ( var i = 0; i < arguments.length; i ++ ) {
+
+		this.content.appendChild( arguments[ i ].dom );
+
+	}
+
+	return this;
+
+};
+
+UI.CollapsiblePanel.prototype.remove = function () {
+
+	for ( var i = 0; i < arguments.length; i ++ ) {
+
+		this.content.removeChild( arguments[ i ].dom );
+
+	}
+
+	return this;
+
+};
+
+UI.CollapsiblePanel.prototype.clear = function () {
+
+	while ( this.content.children.length ) {
+
+		this.content.removeChild( this.content.lastChild );
+
+	}
+
+};
+
+UI.CollapsiblePanel.prototype.toggle = function() {
+
+	this.setCollapsed( !this.isCollapsed );
+
+};
+
+UI.CollapsiblePanel.prototype.collapse = function() {
+
+	this.setCollapsed( true );
+
+};
+
+UI.CollapsiblePanel.prototype.expand = function() {
+
+	this.setCollapsed( false );
+
+};
+
+UI.CollapsiblePanel.prototype.setCollapsed = function( setCollapsed ) {
+
+	if ( setCollapsed ) {
+
+		this.dom.classList.add('collapsed');
+
+	} else {
+
+		this.dom.classList.remove('collapsed');
+
+	}
+
+	this.isCollapsed = setCollapsed;
 
 };
 
@@ -225,10 +373,23 @@ UI.TextArea = function () {
 	dom.className = 'TextArea';
 	dom.style.padding = '2px';
 	dom.style.border = '1px solid #ccc';
+	dom.spellcheck = false;
 
 	dom.addEventListener( 'keydown', function ( event ) {
 
 		event.stopPropagation();
+
+		if ( event.keyCode === 9 ) {
+
+			event.preventDefault();
+
+			var cursor = dom.selectionStart;
+
+			dom.value = dom.value.substring( 0, cursor ) + '\t' + dom.value.substring( cursor );
+			dom.selectionStart = cursor + 1;
+			dom.selectionEnd = dom.selectionStart;
+
+		}
 
 	}, false );
 
@@ -367,13 +528,13 @@ UI.FancySelect = function () {
 					// Highlight selected dom elem and scroll parent if needed
 					scope.setValue( scope.options[ scope.selectedIndex ].value );
 
-					// Invoke object/helper/mesh selection logic
 					scope.dom.dispatchEvent( changeEvent );
 
 				}
 
 				break;
 		}
+
 	}, false);
 
 	this.dom = dom;
@@ -941,6 +1102,52 @@ UI.Button.prototype = Object.create( UI.Element.prototype );
 UI.Button.prototype.setLabel = function ( value ) {
 
 	this.dom.textContent = value;
+
+	return this;
+
+};
+
+
+// Dialog
+
+UI.Dialog = function ( value ) {
+
+	var scope = this;
+	
+	var dom = document.createElement( 'dialog' );
+
+	if ( dom.showModal === undefined ) {
+
+		// fallback
+
+		dom = document.createElement( 'div' );
+		dom.style.display = 'none';
+
+		dom.showModal = function () {
+
+			dom.style.position = 'absolute';
+			dom.style.left = '100px';
+			dom.style.top = '100px';
+			dom.style.zIndex = 1;
+			dom.style.display = '';
+
+		};
+
+	}
+
+	dom.className = 'Dialog';
+
+	this.dom = dom;
+
+	return this;
+
+};
+
+UI.Dialog.prototype = Object.create( UI.Panel.prototype );
+
+UI.Dialog.prototype.showModal = function () {
+
+	this.dom.showModal();
 
 	return this;
 
