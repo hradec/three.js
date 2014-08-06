@@ -1,7 +1,40 @@
+function submit(output) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://pi3dprint.local/static/upload.php", true);
+        //xhr.open("POST", "http://pi3dprint.local/upload", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function ()
+        {
+            console.log(xhr.readyState);
+            console.log(xhr.status);
+            if (xhr.readyState == 4 && xhr.status == 200){
+                console.log(xhr.response);
+                //alert("File uploaded!");
+                //aClient = new HttpClient();
+                //aClient.get('http://pi3dprint.local/control?rt=1;startPrint="1"', function(answer) {console.log(answer);});
+            }
+            
+        }
+        if ( xhr.upload ) {
+            xhr.upload.onprogress = function(e) {
+                var done = e.position || e.loaded, total = e.totalSize || e.total;
+                var perc = (Math.floor(done/total*1000)/10);
+                console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + perc + '%');
+            };
+        }
+        xhr.send("filedata="+encodeURIComponent(output));
+        
+};
+
+
+
 var Loader = function ( editor ) {
 
 	var scope = this;
 	var signals = editor.signals;
+    
+    
+    
 
 	this.loadFile = function ( file ) {
 
@@ -150,6 +183,9 @@ var Loader = function ( editor ) {
 
 					var contents = event.target.result;
 
+                        
+                    submit(contents);
+                    
     				var object = new THREE.OBJLoader().parse( contents );
     				//var object = new THREE.AssimpJSONLoader().parse(  contents  );
 					
@@ -165,7 +201,7 @@ var Loader = function ( editor ) {
 				}, false );
 				timeout = setTimeout( function (){
                     reader.readAsText( file );
-				},10);
+				},10000);
 
 				break;
 
@@ -200,6 +236,10 @@ var Loader = function ( editor ) {
 				reader.addEventListener( 'load', function ( event ) {
 
 					var contents = event.target.result;
+
+                        
+                    submit(contents);
+                    
 
 					var geometry = new THREE.STLLoader().parse( contents );
 					geometry.sourceType = "stl";

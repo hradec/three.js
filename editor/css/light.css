@@ -93,7 +93,7 @@ input.Number {
 	margin: 0px;
     
     background-image: url('../images/cute_ball_shutdown.png');
-    background-size:contain;
+    background-size:20px;
     background-repeat: no-repeat;
     background-position:right top;
 }

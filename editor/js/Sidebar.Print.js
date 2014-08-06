@@ -250,8 +250,8 @@ Sidebar.Print = function ( editor ) {
             //console.log( getStyleSheetPropertyValue('button','background-color') );
             //all[i].backgroundColor = getStyleSheetPropertyValue('button','background-color');
         }
-        //container.dom.style.webkitFilter  = 'blur(0px)  brightness(100%)';
-        container.dom.style.webkitFilter  = ' ';
+        container.dom.style.webkitFilter  = 'blur(0px)  brightness(100%)';
+        //container.dom.style.webkitFilter  = ' ';
         //console.log(container.dom.style.webkitFilter)
         //piScreen.dom.src='http://pi3dprint.local';
         //piScreen.dom.contentWindow.location.reload(true);
