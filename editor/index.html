@@ -245,9 +245,10 @@ THREE.Face3b.prototype = {
 
 				var timeout;
 				var exporter = new THREE.ObjectExporter();
+                window.exporter = exporter;
 
     			var signals = editor.signals;
-
+                window.store = false;
                 
                 // savestate saves the scene from time to time, 
                 // but degrades performance greatly when it has big objects
@@ -256,18 +257,18 @@ THREE.Face3b.prototype = {
 					clearTimeout( timeout );
 
 					timeout = setTimeout( function () {
-
-						editor.storage.set( exporter.parse( editor.scene ) );
+                        window.store = true;
+//    					editor.storage.set( exporter.parse( editor.scene ) );
 
 					}, 1 );
 
 				};
 
-				//signals.objectAdded.add( saveState );
-				//signals.objectChanged.add( saveState );
-				//signals.objectRemoved.add( saveState );
+				signals.objectAdded.add( saveState );
+				signals.objectChanged.add( saveState );
+				signals.objectRemoved.add( saveState );
 				//signals.materialChanged.add( saveState );
-				//signals.sceneGraphChanged.add( saveState );
+				signals.sceneGraphChanged.add( saveState );
                 
 			} );
 
@@ -337,6 +338,7 @@ THREE.Face3b.prototype = {
             var offline = new Event('printerOffline');
             window.printer_online = false;    
             window.printer_online_counter = 0;    
+            window.idle = 0;    
             setInterval(function(){
                 window.printer_online_counter++;
                 aClient = new HttpClient();
@@ -358,6 +360,15 @@ THREE.Face3b.prototype = {
                     document.getElementById("menubar").style.backgroundImage = "url('./images/cute_ball_shutdown.png')";
                 }
                 
+                if( window.idle > 4 ) {
+                    if ( window.store ){
+                        editor.storage.set( window.exporter.parse( editor.scene ) );
+                        window.store = 0;
+                    }
+                    window.idle = 0;
+                }
+
+                window.idle = window.idle+1;    
             },3000);
 
 
