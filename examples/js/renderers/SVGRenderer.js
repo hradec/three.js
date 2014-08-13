@@ -22,6 +22,8 @@ THREE.SVGRenderer = function () {
 	_ambientLight = new THREE.Color(),
 	_directionalLights = new THREE.Color(),
 	_pointLights = new THREE.Color(),
+	_clearColor = new THREE.Color(),
+	_clearAlpha = 1,
 
 	_w, // z-buffer to w-buffer
 	_vector3 = new THREE.Vector3(), // Needed for PointLight
@@ -66,7 +68,8 @@ THREE.SVGRenderer = function () {
 
 	this.setClearColor = function ( color, alpha ) {
 
-		// TODO
+		_clearColor.set( color );
+		_clearAlpha = alpha !== undefined ? alpha : 1;
 
 	};
 
@@ -95,6 +98,8 @@ THREE.SVGRenderer = function () {
 			_svg.removeChild( _svg.childNodes[ 0 ] );
 
 		}
+		
+		_svg.style.backgroundColor = 'rgba(' + ( ( _clearColor.r * 255 ) | 0 ) + ',' + ( ( _clearColor.g * 255 ) | 0 ) + ',' + ( ( _clearColor.b * 255 ) | 0 ) + ',' + _clearAlpha + ')';
 
 	};
 
@@ -123,7 +128,7 @@ THREE.SVGRenderer = function () {
 			var element = _elements[ e ];
 			var material = element.material;
 
-			if ( material === undefined || material.visible === false ) continue;
+			if ( material === undefined || material.opacity === 0 ) continue;
 
 			_elemBox.makeEmpty();
 

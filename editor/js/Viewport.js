@@ -22,7 +22,44 @@ var Viewport = function ( editor ) {
 	// helpers
 
 	var grid = new THREE.GridHelper( 500, 25 );
-	sceneHelpers.add( grid );
+//	sceneHelpers.add( grid );
+
+
+    //var grid = new THREE.Plane( 200, 25 );
+    var geometry    = new THREE.PlaneGeometry( 200, 180, 10, 10 );
+    var m           = new THREE.Matrix4();
+    var quaternion  = new THREE.Quaternion();
+    quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), Math.PI / 2 );
+    m.compose( new THREE.Vector3( 0, -0.01, 0 ), quaternion, new THREE.Vector3( 1, 1, 1 ) );
+    geometry.applyMatrix(m);
+    
+    //texture = THREE.ImageUtils.loadTexture('crate.gif');
+    var material = new THREE.ShaderMaterial({
+            uniforms: {  },
+            vertexShader: [
+                "varying vec2 vUv;",
+            	"void main() {",
+                    "vUv=uv;",
+        			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+        		"}"
+        	].join("\n"),
+        	fragmentShader: [
+                "uniform sampler2D texture1;",
+                "varying vec2 vUv;",
+        		"void main() {",
+                    "float fadeEdge=smoothstep(0.0,0.1,1.0-abs(vUv.x*2.0-1.0)) * smoothstep(0.0,0.1,1.0-abs(vUv.y*2.0-1.0));",
+        			"gl_FragColor = vec4(0.5,0.5,1.0,fadeEdge*0.5);",
+        		"}"
+        	].join("\n")
+    });    
+    material.side = THREE.DoubleSide;
+    //material.opacity = 0.5;
+    material.transparent = true;
+    //var material = new THREE.MeshBasicMaterial( {color: 0x555555, side: THREE.DoubleSide} );
+    var plane = new THREE.Mesh( geometry, material );
+    
+    sceneHelpers.add( plane );
+
 
 	//
     
@@ -456,22 +493,23 @@ var Viewport = function ( editor ) {
 
 	} );
 
-	signals.playAnimations.add( function (animations) {
-		
-		function animate() {
+	var animations = [];
 
-			requestAnimationFrame( animate );
-			
-			for ( var i = 0; i < animations.length ; i ++ ) {
+	signals.playAnimation.add( function ( animation ) {
 
-				animations[i].update(0.016);
+		animations.push( animation );
 
-			} 
+	} );
 
-			render();
+	signals.stopAnimation.add( function ( animation ) {
+
+		var index = animations.indexOf( animation );
+
+		if ( index !== -1 ) {
+
+			animations.splice( index, 1 );
+
 		}
-
-		animate();
 
 	} );
 
@@ -523,11 +561,6 @@ var Viewport = function ( editor ) {
 
 					vertices += geometry.vertices.length;
 					faces += geometry.faces.length;
-
-				} else if ( geometry instanceof THREE.Geometry2 ) {
-
-					vertices += geometry.vertices.length / 3;
-					faces += geometry.vertices.length / 9;
 
 				} else if ( geometry instanceof THREE.BufferGeometry ) {
 
@@ -594,6 +627,28 @@ var Viewport = function ( editor ) {
 	function animate() {
 
 		requestAnimationFrame( animate );
+
+		// animations
+
+		if ( THREE.AnimationHandler.animations.length > 0 ) {
+
+			THREE.AnimationHandler.update( 0.016 );
+
+			for ( var i = 0, l = sceneHelpers.children.length; i < l; i ++ ) {
+
+				var helper = sceneHelpers.children[ i ];
+
+				if ( helper instanceof THREE.SkeletonHelper ) {
+
+					helper.update();
+
+				}
+
+			}
+
+			render();
+
+		}
 
 	}
 

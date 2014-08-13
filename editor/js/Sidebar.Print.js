@@ -14,7 +14,8 @@ Sidebar.Print = function ( editor ) {
 
 	// class
 
-    var slices = new UI.CPanel('SLICER');
+    var slices = new UI.CollapsiblePanel();
+    slices.addStatic( new UI.Text( 'SLICES' ) );
     var sliceThick      = new UI.Number().setWidth( '50px' ).onChange( updatePrint );
 	var sliceTime       = new UI.Number().setWidth( '50px' ).onChange( updatePrint );
     var sliceInitThick  = new UI.Number().setWidth( '50px' ).onChange( updatePrint );
@@ -31,7 +32,7 @@ Sidebar.Print = function ( editor ) {
     
 
     //slices.add( new UI.Text( 'SLICER' ) );
-    //slices.add( new UI.Break(), new UI.Break() )
+    slices.add( new UI.Break() )
     slices.add( new UI.Text( 'Initial layer thickness' ).setWidth( '90px' ) , sliceInitThick);
     slices.add( new UI.Text( 'Initial layer time' ).setWidth( '90px' ) , sliceInitTime);
     slices.add( new UI.Break(), new UI.Break()  )
@@ -115,8 +116,10 @@ Sidebar.Print = function ( editor ) {
     slices.add( cancelPrint );
     
     
+    var control = new UI.CollapsiblePanel();
+    control.addStatic( new UI.Text( 'PRINTER CONTROL' ) );
 
-    var control = new UI.CPanel( 'PRINTER_CONTROL' );
+    //var control = new UI.CPanel( 'PRINTER_CONTROL' );
     //control.add( new UI.Text( 'PRINTER CONTROL' ) );
     
     function moveAxis(self,z){
@@ -152,31 +155,31 @@ Sidebar.Print = function ( editor ) {
     }
 
     control.add( 
-        //new UI.Break(),new UI.Break(),
+        new UI.Break(),
 
-        new UI.Button( '-100' ).setWidth( '41px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '-100' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,-100);
         } ), 
-        new UI.Button( '-10' ).setWidth( '35px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '-10' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,-10);
         } ), 
-        new UI.Button( '-1' ).setWidth( '35px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '-1' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,-1);
         } ), 
-        new UI.Button( '-0.1' ).setWidth( '38px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '-0.1' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,-0.1);
         } ), 
         
-        new UI.Button( '+0.1' ).setWidth( '38px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '+0.1' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,0.1);
         } ), 
-        new UI.Button( '+1' ).setWidth( '35px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '+1' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,1);
         } ), 
-        new UI.Button( '+10' ).setWidth( '35px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '+10' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,10);
         } ), 
-        new UI.Button( '+100' ).setWidth( '41px' ).setHeight( '30px' ).onClick( function () {
+        new UI.Button( '+100' ).setWidth( '12.5%' ).setHeight( '30px' ).onClick( function () {
             moveAxis(this,100);
         } ),
         
@@ -237,8 +240,8 @@ Sidebar.Print = function ( editor ) {
             //console.log( getStyleSheetPropertyValue('button','background-color') );
             //all[i].backgroundColor = getStyleSheetPropertyValue('button','background-color');
         }
-        //container.dom.style.webkitFilter  = 'blur(0px)  brightness(100%)';
-        container.dom.style.webkitFilter  = ' ';
+        container.dom.style.webkitFilter  = 'blur(0px)  brightness(100%)';
+        //container.dom.style.webkitFilter  = ' ';
         //console.log(container.dom.style.webkitFilter)
         //piScreen.dom.src='http://pi3dprint.local';
         //piScreen.dom.contentWindow.location.reload(true);
@@ -253,8 +256,9 @@ Sidebar.Print = function ( editor ) {
     }, false);
     
     
-    
-    var piScreenPanel = new UI.CPanel("PRINTER_SCREEN_CAPTURE");
+    var piScreenPanel = new UI.CollapsiblePanel();
+    piScreenPanel.addStatic( new UI.Text( 'PRINTER_SCREEN_CAPTURE' ) );    
+    //var piScreenPanel = new UI.CPanel("PRINTER_SCREEN_CAPTURE");
     
     var piScreen = new UI.IFrame('http://pi3dprint.local');
     piScreen.dom.height = "200px";
