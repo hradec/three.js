@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<link href="css/types.css" rel="stylesheet" />
-		<link id="theme" href="css/light.css" rel="stylesheet" />
+		<link id="theme" href="css/dark.css" rel="stylesheet" />
 
 
         <!-- 
@@ -141,7 +141,7 @@ function ping(ip, callback) {
 }
 
 
-NProgress.configure({ showSpinner: true });
+//NProgress.configure({ showSpinner: true });
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -260,14 +260,14 @@ THREE.Face3b.prototype = {
                         window.store = true;
 //    					editor.storage.set( exporter.parse( editor.scene ) );
 
-					}, 1 );
+					}, 100 );
 
 				};
 
 				signals.objectAdded.add( saveState );
 				signals.objectChanged.add( saveState );
 				signals.objectRemoved.add( saveState );
-				//signals.materialChanged.add( saveState );
+				signals.materialChanged.add( saveState );
 				signals.sceneGraphChanged.add( saveState );
                 
 			} );
@@ -336,6 +336,7 @@ THREE.Face3b.prototype = {
 
             var online = new Event('printerOnline');
             var offline = new Event('printerOffline');
+            var idle = new Event('idle');
             window.printer_online = false;    
             window.printer_online_counter = 0;    
             window.idle = 0;    
@@ -361,15 +362,32 @@ THREE.Face3b.prototype = {
                 }
                 
                 if( window.idle > 4 ) {
-                    if ( window.store ){
-                        editor.storage.set( window.exporter.parse( editor.scene ) );
-                        window.store = 0;
-                    }
-                    window.idle = 0;
+                    editor.signals.idle.dispatch();
+                    idle_event()
+                    resetIdle()
                 }
 
                 window.idle = window.idle+1;    
             },3000);
+            
+            window.onload = resetIdle;
+            window.onmousemove = resetIdle;
+            window.onmousedown = resetIdle; // catches touchscreen presses
+            window.onclick = resetIdle;     // catches touchpad clicks
+            window.onscroll = resetIdle;    // catches scrolling with arrow keys
+            window.onkeypress = resetIdle;
+        
+            function resetIdle() {
+                window.idle=0;
+            }
+            
+            
+            function idle_event(){
+                if ( window.store ){
+                    editor.storage.set( window.exporter.parse( editor.scene ) );
+                    window.store = 0;
+                }
+            }
 
 
 		</script>

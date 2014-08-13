@@ -287,7 +287,7 @@ var Viewport = function ( editor ) {
 
 		container.dom.removeChild( renderer.domElement );
 
-		renderer = new THREE[ type ]( { antialias: true } );
+		renderer = new THREE[ type ]( { antialias: false } );
 		renderer.autoClear = false;
 		renderer.autoUpdateScene = false;
 		renderer.setClearColor( clearColor );
@@ -519,13 +519,13 @@ var Viewport = function ( editor ) {
 
 	if ( editor.config.getKey( 'renderer' ) !== undefined ) {
 
-		renderer = new THREE[ editor.config.getKey( 'renderer' ) ]( { antialias: true } );
+		renderer = new THREE[ editor.config.getKey( 'renderer' ) ]( { antialias: false } );
 
 	} else {
 
 		if ( System.support.webgl === true ) {
 
-			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer = new THREE.WebGLRenderer( { antialias: false } );
 
 		} else {
 

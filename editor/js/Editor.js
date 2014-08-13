@@ -22,6 +22,9 @@ var Editor = function () {
 
 		// notifications
 
+    	idle: new SIGNALS.Signal(),
+
+
 		themeChanged: new SIGNALS.Signal(),
 
 		transformModeChanged: new SIGNALS.Signal(),

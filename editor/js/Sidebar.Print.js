@@ -42,18 +42,30 @@ Sidebar.Print = function ( editor ) {
     slices.add( new UI.Text( 'Normal layer time' ).setWidth( '90px' ) , sliceTime);
 
     slices.add( new UI.Break(), new UI.Break() )
+    
+    function startPrinting()
+    {
+        aClient = new HttpClient();
+        aClient.get('http://pi3dprint.local/control?rt=1;startPrint="1"', function(answer) {console.log(answer);});
+    }
+    function cancelPrinting()
+    {
+        aClient = new HttpClient();
+        aClient.get('http://pi3dprint.local/control?rt=1;cancelPrint="1"', function(answer) {console.log(answer);});
+    }
+    function pausePrinting()
+    {
+        aClient = new HttpClient();
+        aClient.get('http://pi3dprint.local/control?rt=1;pausePrint="1"', function(answer) {console.log(answer);});
+    }
 
-    var startPrint = new UI.Button( 'Start Printing' ).setWidth( '100%' ).setHeight( '25px' ).onClick( function () {
-    });
+    var startPrint  = new UI.Button( 'Start Printing'  ).setWidth( '100%' ).setHeight( '25px' ).onClick( startPrinting  );
+    var pausePrint  = new UI.Button( 'Pause Printing'  ).setWidth( '100%' ).setHeight( '25px' ).onClick( pausePrinting  );
+    var cancelPrint = new UI.Button( 'Cancel Printing' ).setWidth( '100%' ).setHeight( '25px' ).onClick( cancelPrinting );
     
-    var pausePrint = new UI.Button( 'Pause Printing' ).setWidth( '100%' ).setHeight( '25px' ).onClick( function () {
-    });
-    
-    var cancelPrint = new UI.Button( 'Cancel Printing' ).setWidth( '100%' ).setHeight( '25px' ).onClick( function () {
-    });
     startPrint.setDisabled(true);
     pausePrint.setDisabled(true);
-    cancelPrint.setDisabled(true);
+    cancelPrint.setDisabled(false);
 
 
     var printButton = new UI.Button( 'Submit Print' ).setWidth( '100%' ).setHeight( '25px' ).onClick( function () {
@@ -71,6 +83,8 @@ Sidebar.Print = function ( editor ) {
         printButton.innerHTML = printButton.dom.innerHTML;
         printButton.backgroundImage = backupCSS;
         
+        cancelPrinting();
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "http://pi3dprint.local/static/put.php", true);
         //xhr.open("POST", "http://pi3dprint.local/upload", true);
@@ -82,8 +96,7 @@ Sidebar.Print = function ( editor ) {
             if (xhr.readyState == 4 && xhr.status == 200){
                 console.log(xhr.response);
                 //alert("File uploaded!");
-                aClient = new HttpClient();
-                aClient.get('http://pi3dprint.local/control?rt=1;startPrint="1"', function(answer) {console.log(answer);});
+                startPrinting();
                 printButton.setDisabled(false);
                 startPrint.setDisabled(false);
                 pausePrint.setDisabled(false);
@@ -245,6 +258,7 @@ Sidebar.Print = function ( editor ) {
         //console.log(container.dom.style.webkitFilter)
         //piScreen.dom.src='http://pi3dprint.local';
         //piScreen.dom.contentWindow.location.reload(true);
+        _reloadPrintScreen();
     }, false);
 
     document.addEventListener('printerOffline', function (e) {
@@ -264,14 +278,35 @@ Sidebar.Print = function ( editor ) {
     piScreen.dom.height = "200px";
     piScreen.dom.width = "100%";
     piScreen.dom.frameborder = 0;
-    
-    var reloadPiScreen = new UI.Button( 'Refresh' ).setWidth( '100%' ).setHeight( '20px' ).onClick( function () {
+
+    function _reloadPrintScreen(){
         piScreen.dom.src='http://pi3dprint.local';
         piScreen.dom.contentWindow.location.reload(true);
+    }
+
+    var reloadPiScreen = new UI.Button( 'Refresh' ).setWidth( '100%' ).setHeight( '20px' ).onClick( function () {
+        _reloadPrintScreen();
+    } );
+    
+    
+    function bash(cmd){
+        aClient = new HttpClient();
+        aClient.get('http://pi3dprint.local/control?rt=1;bash='+cmd, function(answer) {
+            console.log(answer);
+        });
+    }
+    
+    var reboot = new UI.Button( 'Reboot Printer' ).setWidth( '100%' ).setHeight( '20px' ).onClick( function () {
+        bash("sudo reboot");
+    } );
+    var halt = new UI.Button( 'Power Off Printer' ).setWidth( '100%' ).setHeight( '20px' ).onClick( function () {
+        bash("sudo halt");
     } );
 
     piScreenPanel.add( piScreen );
     piScreenPanel.add( reloadPiScreen );
+    piScreenPanel.add( reboot );
+    piScreenPanel.add( halt );
     
 
     container.add( control );

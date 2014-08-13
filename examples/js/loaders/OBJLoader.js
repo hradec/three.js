@@ -94,6 +94,7 @@ THREE.OBJLoader.prototype = {
 						normals[ parseNormalIndex( normals_inds[ 1 ] ) ].clone(),
 						normals[ parseNormalIndex( normals_inds[ 2 ] ) ].clone()
 					]*/
+
 				) );
 
 			}
@@ -190,7 +191,6 @@ THREE.OBJLoader.prototype = {
 
 		var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/
 
-		// fixes
 
 		text = text.replace( /\\\r\n/g, '' ); // handles line continuations \
 

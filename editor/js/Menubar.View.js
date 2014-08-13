@@ -32,6 +32,6 @@ Menubar.View = function ( editor ) {
 
 	optionsPanel = UI.MenubarHelper.createOptionsPanel( menuConfig );
 
-	return UI.MenubarHelper.createMenuContainer( 'View', optionsPanel );
+	return UI.MenubarHelper.createMenuContainer( 'Theme', optionsPanel );
 
 }

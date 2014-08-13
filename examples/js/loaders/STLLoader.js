@@ -119,13 +119,12 @@ THREE.STLLoader.prototype.parseBinary = function ( data ) {
 
 		for ( var i = 1; i <= 3; i ++ ) {
 
-//<<<<<<< HEAD
-		length = geometry.vertices.length;
-		geometry.faces.push(new THREE.Face3b(length - 3, length - 2, length - 1, normal));
-/*
-=======
-			var vertexstart = start + i * 12;
 
+//<<<<<<< HEAD
+//		length = geometry.vertices.length;
+//		geometry.faces.push(new THREE.Face3b(length - 3, length - 2, length - 1, normal));
+//=======
+    		var vertexstart = start + i * 12;
 			vertices[ offset     ] = reader.getFloat32( vertexstart, true );
 			vertices[ offset + 1 ] = reader.getFloat32( vertexstart + 4, true );
 			vertices[ offset + 2 ] = reader.getFloat32( vertexstart + 8, true );
@@ -137,8 +136,6 @@ THREE.STLLoader.prototype.parseBinary = function ( data ) {
 			offset += 3;
 
 		}
->>>>>>> master
-*/
 	}
 
 	geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
@@ -386,5 +383,4 @@ if ( typeof DataView === 'undefined'){
 		}
 
 	 };
-
 }

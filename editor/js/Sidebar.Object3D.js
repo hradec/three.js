@@ -532,19 +532,30 @@ Sidebar.Object3D = function ( editor ) {
 //			if ( object.fov !== undefined ) {
 /*=======
 		objectPositionX.setValue( object.position.x );
+=======
+    	objectPositionX.setValue( object.position.x );
+>>>>>>> 549d82f0630efcc156fe5bac7166ee32e07f1faf
 		objectPositionY.setValue( object.position.y );
 		objectPositionZ.setValue( object.position.z );
 
-		objectRotationX.setValue( object.rotation.x );
-		objectRotationY.setValue( object.rotation.y );
-		objectRotationZ.setValue( object.rotation.z );
+        // auto-rotate 90o in case geometry is Y up
+        objectYUPLock.setValue(object.yup);
+        if ( objectYUPLock.getValue() === true ) {
+    		objectRotationX.setValue( rad2deg(object.rotation.x)+90 );
+        }else{
+        	objectRotationX.setValue( rad2deg(object.rotation.x) );
+        }
+		objectRotationY.setValue( rad2deg(object.rotation.y) );
+		objectRotationZ.setValue( rad2deg(object.rotation.z) );
 
 		objectScaleX.setValue( object.scale.x );
 		objectScaleY.setValue( object.scale.y );
 		objectScaleZ.setValue( object.scale.z );
+<<<<<<< HEAD
 >>>>>>> master
 */
-		if ( object.fov !== undefined ) {
+
+        if ( object.fov !== undefined ) {
 
 			objectFov.setValue( object.fov );
 
