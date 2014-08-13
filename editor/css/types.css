@@ -48,3 +48,23 @@
 .MeshPhongMaterial {
 	color: #ffaa88;
 }
+
+.warning {
+    position:absolute;
+    left:0px;
+    top:0px;
+    right:0px;
+    bottom:0px;
+    border: 0px solid;
+    margin: 00px 00px;
+    padding:220px 20% 0% 310px;
+    background-repeat: no-repeat;
+    background-position: 50px 220px;
+    color: rgb(0,0,0);
+    background-color: rgba(200,200,200,0.7);
+    background-image: url('../images/warning.png');
+    z-index:10;
+    display:block;
+    font-size:30px;
+    text-shadow:4px 4px 10px #444444;
+}

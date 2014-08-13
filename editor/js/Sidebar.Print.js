@@ -258,7 +258,7 @@ Sidebar.Print = function ( editor ) {
         //console.log(container.dom.style.webkitFilter)
         //piScreen.dom.src='http://pi3dprint.local';
         //piScreen.dom.contentWindow.location.reload(true);
-        _reloadPrintScreen();
+        //_reloadPrintScreen();
     }, false);
 
     document.addEventListener('printerOffline', function (e) {

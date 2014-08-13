@@ -47,12 +47,14 @@
 		<script src="../examples/js/renderers/SoftwareRenderer.js"></script>
 		<script src="../examples/js/renderers/SVGRenderer.js"></script>
 
-		<!-- WIP -->
+		<!-- WIP 
 
 		<script src="../examples/js/BufferGeometryUtils.js"></script>
+    	<script src="../examples/js/exporters/Geometry2Exporter.js"></script>
+        
+        -->
 
 		<script src="../examples/js/exporters/BufferGeometryExporter.js"></script>
-		<script src="../examples/js/exporters/Geometry2Exporter.js"></script>
 		<script src="../examples/js/exporters/GeometryExporter.js"></script>
 		<script src="../examples/js/exporters/MaterialExporter.js"></script>
 		<script src="../examples/js/exporters/ObjectExporter.js"></script>
@@ -216,30 +218,44 @@ THREE.Face3b.prototype = {
 			var sidebar = new Sidebar( editor ).setId( 'sidebar' );
 			document.body.appendChild( sidebar.dom );
 
+
+            var warning = document.createElement('div');
+            warning.id = 'warning';
+            warning.className = 'warning';
+            warning.innerHTML = "<h1>Wait while we retrieve the scene data...</h1>"
+            warning.style.display="none";
+            document.body.appendChild(warning);
+            
+
 			editor.setTheme( editor.config.getKey( 'theme' ) );
 
 			editor.storage.init( function () {
+                warning.style.display="block";
 
-				editor.storage.get( function ( state ) {
+                setTimeout( function () {
+	    			editor.storage.get( function ( state ) {
 
-					if ( state !== undefined ) {
+		    			if ( state !== undefined ) {
 
-						var loader = new THREE.ObjectLoader();
-						var scene = loader.parse( state );
+    						var loader = new THREE.ObjectLoader();
+    						var scene = loader.parse( state );
+    
+    						editor.setScene( scene );
+    
+    					}
+    
+    					var selected = editor.config.getKey( 'selected' );
+    
+    					if ( selected !== undefined ) {
+    
+    						editor.selectByUuid( selected );
+    
+    					}
 
-						editor.setScene( scene );
+                        warning.style.display="none";
+    				} );
+                },1);
 
-					}
-
-					var selected = editor.config.getKey( 'selected' );
-
-					if ( selected !== undefined ) {
-
-						editor.selectByUuid( selected );
-
-					}
-
-				} );
 
 				//
 
@@ -370,23 +386,53 @@ THREE.Face3b.prototype = {
                 window.idle = window.idle+1;    
             },3000);
             
-            window.onload = resetIdle;
-            window.onmousemove = resetIdle;
-            window.onmousedown = resetIdle; // catches touchscreen presses
-            window.onclick = resetIdle;     // catches touchpad clicks
-            window.onscroll = resetIdle;    // catches scrolling with arrow keys
-            window.onkeypress = resetIdle;
+            
+        window.addEventListener( "mousedown", resetIdle, false );
+		window.addEventListener( "touchstart", resetIdle, false );
+
+		window.addEventListener( "mousemove", resetIdle, false );
+		window.addEventListener( "touchmove", resetIdle, false );
+
+		window.addEventListener( "mousemove", resetIdle, false );
+		window.addEventListener( "touchmove", resetIdle, false );
+
+		window.addEventListener( "mouseup", resetIdle, false );
+		window.addEventListener( "mouseout", resetIdle, false );
+		window.addEventListener( "touchend", resetIdle, false );
+		window.addEventListener( "touchcancel", resetIdle, false );
+		window.addEventListener( "touchleave", resetIdle, false );
+            
+        window.addEventListener( "onload", resetIdle, false );
+        window.addEventListener( "onscroll", resetIdle, false );
+        window.addEventListener( "onkeypress", resetIdle, false );
+
+
+            //window.onload = resetIdle;
+            //window.onmousemove = resetIdle;
+            //window.onmousedown = resetIdle; // catches touchscreen presses
+            //window.onclick = resetIdle;     // catches touchpad clicks
+            //window.onscroll = resetIdle;    // catches scrolling with arrow keys
+            //window.onkeypress = resetIdle;
         
             function resetIdle() {
                 window.idle=0;
             }
             
             
+            function storeSceneData(){
+                    if ( window.store ){
+                        warning.innerHTML = "<h1>Wait while we store the scene data...</h1>"
+                        warning.style.display="block";
+                        window.store = false;
+                        setTimeout(function(){
+                            editor.storage.set( window.exporter.parse( editor.scene ) );
+                            warning.style.display="none";
+                        },500);
+                    }
+            }
+
             function idle_event(){
-                if ( window.store ){
-                    editor.storage.set( window.exporter.parse( editor.scene ) );
-                    window.store = 0;
-                }
+                storeSceneData();
             }
 
 
